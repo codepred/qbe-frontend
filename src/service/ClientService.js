@@ -68,15 +68,17 @@ class ClientService {
             .catch(err => err.response)
     }
 
-    async balance(fName) {
-        console.log(fName)
+    async balance(min,max) {
+        console.log(min)
+        console.log(max)
         return await axios({
             method: 'GET',
             url: 'http://localhost:8080/customer/balance',
             headers: {
             },
             params: {
-                balance: fName
+                min: min,
+                max: max
             }
         })
             .then(res => res)

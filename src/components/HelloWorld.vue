@@ -13,7 +13,8 @@ const headers = [
 const fName = ref('');
 const fNameEnds = ref('');
 const lNameEnds = ref('');
-const fbalance = ref('');
+const fbalanceMin = ref('');
+const fbalanceMax = ref('');
 
 
 
@@ -53,8 +54,8 @@ const lastNameEndsWith = async () => {
 }
 
 const balance = async () => {
-  console.log(fName.value)
-  await ClientService.balance(fbalance.value).then((response) => {
+  console.log(fbalanceMin.value)
+  await ClientService.balance(fbalanceMin.value,fbalanceMax.value).then((response) => {
     bookList.value = response.data
   })
 }
@@ -63,11 +64,11 @@ const balance = async () => {
 
 
 const exportToPDF = async () => {
-      html2pdf(document.getElementById("element-to-convert"), {
-				margin: 1,
-  			filename: "html.pdf",
-			});
-    }
+  html2pdf(document.getElementById("element-to-convert"), {
+    margin: 1,
+    filename: "html.pdf",
+  });
+}
 
 
 onMounted(getClientsData)
@@ -75,43 +76,48 @@ onMounted(getClientsData)
 
 
 <template >
-
   <div style="display:flex;margin-bottom:10%">
-  <form @submit.prevent="getClientsData">
-    <button type="submit" class="btn btn-primary">Lista wszystkich</button>
-  </form>
-  <br>
-  <form @submit.prevent="filter">
-    <button type="submit" class="btn btn-primary">Lista limitowana</button>
-  </form>
-  <br>
-  <form @submit.prevent="firstNameList(fName)">
-    <input v-model="fName" type="text">
+    <form @submit.prevent="getClientsData">
+      <button type="submit" class="btn btn-primary">Lista wszystkich</button>
+    </form>
     <br>
-    <button type="submit" class="btn btn-primary">Filtr pierwsze imie</button>
-  </form>
+    <form @submit.prevent="filter">
+      <button type="submit" class="btn btn-primary">Lista limitowana</button>
+    </form>
+    <br>
+    <form @submit.prevent="firstNameList(fName)">
+      <input v-model="fName" type="text">
+      <br>
+      <button type="submit" class="btn btn-primary">Filtr pierwsze imie</button>
+    </form>
   </div>
   <div style="display:flex;margin-bottom:10%">
-      <form @submit.prevent="firstNameEndsWith(fNameEnds)">
-        <input v-model="fNameEnds" type="text">
-        <br>
-        <button type="submit" class="btn btn-primary">Pierwsze imie końszy sie na </button>
-      </form>
-  <br>
-  <form @submit.prevent="lastNameEndsWith(lNameEnds)">
-    <input v-model="lNameEnds" type="text">
+    <form @submit.prevent="firstNameEndsWith(fNameEnds)">
+      <input v-model="fNameEnds" type="text">
+      <br>
+      <button type="submit" class="btn btn-primary">Pierwsze imie końszy sie na </button>
+    </form>
     <br>
-    <button type="submit" class="btn btn-primary">Nazwisko imie końszy sie na </button>
-  </form>
-  <br>
-  <form @submit.prevent="balance(fbalance)">
-    <input v-model="fbalance" type="text">
+    <form @submit.prevent="lastNameEndsWith(lNameEnds)">
+      <input v-model="lNameEnds" type="text">
+      <br>
+      <button type="submit" class="btn btn-primary">Nazwisko imie końszy sie na </button>
+    </form>
     <br>
-    <button type="submit" class="btn btn-primary">Stan konta</button>
-  </form>
+
+    <form style="display:flex;" @submit.prevent="balance(fbalanceMin,fbalanceMax)">
+      <p>OD </p>
+      <input v-model="fbalanceMin" type="text">
+      <p>DO </p>
+      <input v-model="fbalanceMax" type="text">
+      <div style="display:flex;">
+      <button  type="submit" class="btn btn-primary">Stan konta</button>
+      </div>
+    </form>
+  
   </div>
   <div id="element-to-convert">
-  <EasyDataTable :headers="headers" :items="bookList" />
+    <EasyDataTable :headers="headers" :items="bookList" />
   </div>
   <div>
     <form @submit.prevent="exportToPDF">
@@ -119,5 +125,4 @@ onMounted(getClientsData)
       <button type="submit" class="btn btn-primary">Export to pdf</button>
     </form>
   </div>
-  
 </template>
